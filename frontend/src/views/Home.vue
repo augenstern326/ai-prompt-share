@@ -106,8 +106,8 @@
 
 <script>
 import { ref, onMounted } from 'vue'
-import { useUserStore } from '../stores/user'
-import api from '../api'
+import { useUserStore } from '@/stores/user'
+import * as api from '../api'
 
 export default {
   name: 'HomePage',
@@ -121,7 +121,7 @@ export default {
     const fetchHotPrompts = async () => {
       try {
         loading.value = true
-        const res = await api.prompt.getPromptList({
+        const res = await api.getPromptList({
           current: 1,
           size: 6,
           sortType: 1 // 按热度排序
@@ -140,7 +140,7 @@ export default {
     const fetchLatestPrompts = async () => {
       try {
         loading.value = true
-        const res = await api.prompt.getPromptList({
+        const res = await api.getPromptList({
           current: 1,
           size: 6,
           sortType: 0 // 按最新排序

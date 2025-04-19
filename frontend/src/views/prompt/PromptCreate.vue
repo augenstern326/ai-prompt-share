@@ -5,7 +5,7 @@
         <h1>{{ isEdit ? '编辑提示词' : '创建提示词' }}</h1>
         <p>{{ isEdit ? '修改您的提示词内容和信息' : '分享您的AI提示词，帮助更多人创作' }}</p>
       </div>
-      
+
       <div class="prompt-create-form">
         <a-form
           :model="formData"
@@ -16,15 +16,15 @@
           <a-form-item label="标题" name="title">
             <a-input v-model:value="formData.title" placeholder="请输入提示词标题" />
           </a-form-item>
-          
+
           <a-form-item label="提示词内容" name="content">
-            <a-textarea 
-              v-model:value="formData.content" 
-              placeholder="请输入提示词内容" 
-              :rows="8" 
+            <a-textarea
+              v-model:value="formData.content"
+              placeholder="请输入提示词内容"
+              :rows="8"
             />
           </a-form-item>
-          
+
           <a-form-item label="标签" name="tagIds">
             <a-select
               v-model:value="formData.tagIds"
@@ -35,26 +35,26 @@
               :tokenSeparators="[',']"
               @change="handleTagChange"
             >
-              <template #dropdownRender="{ menuNode: menu }">
-                <div>
-                  {{ menu }}
-                  <a-divider style="margin: 4px 0" />
-                  <div style="padding: 8px; cursor: pointer">
-                    <a-input
-                      v-model:value="newTagName"
-                      placeholder="输入新标签名称"
-                      @pressEnter="addTag"
-                    >
-                      <template #suffix>
-                        <a-button type="link" @click="addTag">添加</a-button>
-                      </template>
-                    </a-input>
-                  </div>
-                </div>
-              </template>
+<!--              <template #dropdownRender="{ menuNode: menu }">-->
+<!--                <div>-->
+<!--                  {{ menu }}-->
+<!--                  <a-divider style="margin: 4px 0" />-->
+<!--                  <div style="padding: 8px; cursor: pointer">-->
+<!--                    <a-input-->
+<!--                      v-model:value="newTagName"-->
+<!--                      placeholder="输入新标签名称"-->
+<!--                      @pressEnter="addTag"-->
+<!--                    >-->
+<!--                      <template #suffix>-->
+<!--                        <a-button type="link" @click="addTag">添加</a-button>-->
+<!--                      </template>-->
+<!--                    </a-input>-->
+<!--                  </div>-->
+<!--                </div>-->
+<!--              </template>-->
             </a-select>
           </a-form-item>
-          
+
           <a-form-item label="效果图片" name="imageUrl">
             <a-upload
               v-model:fileList="fileList"
@@ -63,6 +63,7 @@
               @preview="handlePreview"
               @change="handleChange"
               :maxCount="1"
+              action="http://localhost:8000/api/file/upload"
             >
               <div v-if="fileList.length < 1">
                 <upload-outlined />
@@ -78,7 +79,7 @@
               <img alt="预览图片" style="width: 100%" :src="previewImage" />
             </a-modal>
           </a-form-item>
-          
+
           <a-form-item>
             <a-button type="primary" html-type="submit" :loading="submitLoading">
               {{ isEdit ? '保存修改' : '创建提示词' }}
@@ -96,7 +97,7 @@ import { ref, reactive, computed, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { message } from 'ant-design-vue'
 import { UploadOutlined } from '@ant-design/icons-vue'
-import api from '../../api'
+import * as api from '../../api'
 
 const route = useRoute()
 const router = useRouter()
@@ -106,7 +107,7 @@ const promptId = computed(() => isEdit.value ? route.params.id : null)
 const submitLoading = ref(false)
 const tagsLoading = ref(false)
 const tagOptions = ref([])
-const newTagName = ref('')
+// const newTagName = ref('')
 const fileList = ref([])
 const previewVisible = ref(false)
 const previewImage = ref('')
@@ -138,7 +139,7 @@ const rules = {
 const fetchTags = async () => {
   tagsLoading.value = true
   try {
-    const res = await api.tag.getTagList()
+    const res = await api.getTagList()
     if (res.code === 200) {
       tagOptions.value = res.data.map(tag => ({
         label: tag.name,
@@ -153,31 +154,31 @@ const fetchTags = async () => {
 }
 
 // 添加新标签
-const addTag = async () => {
-  if (!newTagName.value) {
-    message.warning('请输入标签名称')
-    return
-  }
-  
-  try {
-    const res = await api.tag.createTag({
-      name: newTagName.value,
-      type: 1 // 用户创建
-    })
-    if (res.code === 200) {
-      const newTagId = res.data
-      tagOptions.value.push({
-        label: newTagName.value,
-        value: newTagId
-      })
-      formData.tagIds.push(newTagId)
-      newTagName.value = ''
-      message.success('标签创建成功')
-    }
-  } catch (error) {
-    message.error('创建标签失败，请稍后重试')
-  }
-}
+// const addTag = async () => {
+//   if (!newTagName.value) {
+//     message.warning('请输入标签名称')
+//     return
+//   }
+//
+//   try {
+//     const res = await api.createTag({
+//       name: newTagName.value,
+//       type: 1 // 用户创建
+//     })
+//     if (res.code === 200) {
+//       const newTagId = res.data
+//       tagOptions.value.push({
+//         label: newTagName.value,
+//         value: newTagId
+//       })
+//       formData.tagIds.push(newTagId)
+//       newTagName.value = ''
+//       message.success('标签创建成功')
+//     }
+//   } catch (error) {
+//     message.error('创建标签失败，请稍后重试')
+//   }
+// }
 
 // 处理标签变化
 const handleTagChange = (value) => {
@@ -190,12 +191,12 @@ const beforeUpload = (file) => {
   if (!isImage) {
     message.error('只能上传图片文件!')
   }
-  
+
   const isLt2M = file.size / 1024 / 1024 < 2
   if (!isLt2M) {
     message.error('图片大小不能超过2MB!')
   }
-  
+
   return false // 阻止自动上传，改为手动上传
 }
 
@@ -225,25 +226,25 @@ const getBase64 = (file) => {
 }
 
 // 上传图片
-const uploadImage = async (file) => {
-  // 注意：这里应该调用MinIO上传接口，但由于MinIO集成在步骤9中完成，这里先模拟
-  // 实际项目中，这里应该调用后端的图片上传接口
-  return Promise.resolve(`/uploads/${file.name}`) // 模拟返回图片URL
-}
+// const uploadImage = async (file) => {
+//   // 注意：这里应该调用MinIO上传接口，但由于MinIO集成在步骤9中完成，这里先模拟
+//   // 实际项目中，这里应该调用后端的图片上传接口
+//   return Promise.resolve(`/uploads/${file.name}`) // 模拟返回图片URL
+// }
 
 // 获取提示词详情（编辑模式）
 const fetchPromptDetail = async () => {
   if (!isEdit.value) return
-  
+
   try {
-    const res = await api.prompt.getPromptDetail(promptId.value)
+    const res = await api.getPromptDetail(promptId.value)
     if (res.code === 200) {
       const { title, content, imageUrl, tags } = res.data
       formData.title = title
       formData.content = content
       formData.imageUrl = imageUrl
       formData.tagIds = tags.map(tag => tag.id)
-      
+
       if (imageUrl) {
         fileList.value = [{
           uid: '-1',
@@ -262,25 +263,25 @@ const fetchPromptDetail = async () => {
 // 提交表单
 const handleSubmit = async () => {
   submitLoading.value = true
-  
+
   try {
     // 上传图片（如果有）
     if (fileList.value.length > 0 && fileList.value[0].originFileObj) {
-      formData.imageUrl = await uploadImage(fileList.value[0].originFileObj)
+      //formData.imageUrl = fileList.value.
     }
-    
+
     let res
     if (isEdit.value) {
       // 更新提示词
-      res = await api.prompt.updatePrompt({
+      res = await api.updatePrompt({
         id: promptId.value,
         ...formData
       })
     } else {
       // 创建提示词
-      res = await api.prompt.createPrompt(formData)
+      res = await api.createPrompt(formData)
     }
-    
+
     if (res.code === 200) {
       message.success(isEdit.value ? '提示词更新成功' : '提示词创建成功')
       if (isEdit.value) {

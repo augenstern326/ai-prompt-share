@@ -55,7 +55,7 @@
                     <div class="prompt-card-content">
                       <h3 class="prompt-card-title">{{ prompt.title }}</h3>
                       <div class="prompt-card-tags">
-                        <span v-for="tag in prompt.tags.slice(0, 3)" :key="tag.id" class="tag">{{ tag.name }}</span>
+<!--                        <span v-for="tag in prompt.tags.slice(0, 3)" :key="tag.id" class="tag">{{ tag.name }}</span>-->
                       </div>
                       <div class="prompt-card-footer">
                         <div class="prompt-card-stats">
@@ -95,7 +95,7 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import api from '../../api'
+import * as api from '../../api'
 
 const route = useRoute()
 const router = useRouter()
@@ -112,7 +112,7 @@ const sortType = ref(0)
 // 获取标签列表
 const fetchTags = async () => {
   try {
-    const res = await api.tag.getTagList()
+    const res = await api.getTagList()
     if (res.code === 200) {
       tagOptions.value = res.data.map(tag => ({
         label: tag.name,
@@ -128,7 +128,7 @@ const fetchTags = async () => {
 const fetchPrompts = async () => {
   loading.value = true
   try {
-    const res = await api.prompt.getPromptList({
+    const res = await api.getPromptList({
       current: current.value,
       size: size.value,
       keyword: searchKeyword.value,

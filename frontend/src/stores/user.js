@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 import { message } from 'ant-design-vue'
-import api from '../api'
+import * as api from '@/api'
 
 export const useUserStore = defineStore('user', () => {
   // 状态
@@ -13,7 +13,8 @@ export const useUserStore = defineStore('user', () => {
   // 登录
   const login = async (loginData) => {
     try {
-      const res = await api.user.login(loginData)
+      const res = await api.login(loginData)
+      console.log(res)
       if (res.code === 200) {
         token.value = res.data.token
         userInfo.value = res.data
@@ -34,7 +35,7 @@ export const useUserStore = defineStore('user', () => {
   // 注册
   const register = async (registerData) => {
     try {
-      const res = await api.user.register(registerData)
+      const res = await api.register(registerData)
       if (res.code === 200) {
         token.value = res.data.token
         userInfo.value = res.data
@@ -55,7 +56,7 @@ export const useUserStore = defineStore('user', () => {
   // 获取用户信息
   const getUserInfo = async () => {
     try {
-      const res = await api.user.getUserInfo()
+      const res = await api.getUserInfo()
       if (res.code === 200) {
         userInfo.value = res.data
         localStorage.setItem('userInfo', JSON.stringify(res.data))
@@ -71,7 +72,7 @@ export const useUserStore = defineStore('user', () => {
   // 更新用户信息
   const updateUserInfo = async (userData) => {
     try {
-      const res = await api.user.updateUserInfo(userData)
+      const res = await api.updateUserInfo(userData)
       if (res.code === 200) {
         await getUserInfo()
         message.success('更新成功')
@@ -89,13 +90,18 @@ export const useUserStore = defineStore('user', () => {
   // 登出
   const logout = async () => {
     try {
-      await api.user.logout()
-      token.value = ''
-      userInfo.value = {}
-      localStorage.removeItem('token')
-      localStorage.removeItem('userInfo')
-      message.success('已退出登录')
-      return true
+      const res = await api.logout()
+      if(res.code===200){
+        token.value = ''
+        userInfo.value = {}
+        localStorage.removeItem('token')
+        localStorage.removeItem('userInfo')
+        message.success('已退出登录')
+        return true
+      }else {
+        message.error(res.message)
+        return false
+      }
     } catch (error) {
       return false
     }

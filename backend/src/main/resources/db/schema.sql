@@ -1,6 +1,6 @@
 -- 用户表
 CREATE TABLE `user` (
-  `id` varchar(32) NOT NULL AUTO_INCREMENT COMMENT '用户ID',
+  `id` varchar(32) NOT NULL DEFAULT (REPLACE(UUID(), '-', '')) COMMENT '用户ID',
   `username` varchar(50) NOT NULL COMMENT '用户名',
   `password` varchar(100) NOT NULL COMMENT '密码',
   `email` varchar(100) DEFAULT NULL COMMENT '邮箱',
@@ -17,8 +17,9 @@ CREATE TABLE `user` (
 
 -- 标签表
 CREATE TABLE `tag` (
-  `id` varchar(32) NOT NULL AUTO_INCREMENT COMMENT '标签ID',
+  `id` varchar(32) NOT NULL DEFAULT (REPLACE(UUID(), '-', '')) COMMENT '标签ID',
   `name` varchar(50) NOT NULL COMMENT '标签名称',
+  `user_id` varchar(32) NOT NULL COMMENT '创建人ID',
   `type` tinyint(1) NOT NULL DEFAULT 0 COMMENT '标签类型：0-系统预设，1-用户创建',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
@@ -29,7 +30,7 @@ CREATE TABLE `tag` (
 
 -- 提示词表
 CREATE TABLE `prompt` (
-  `id` varchar(32) NOT NULL AUTO_INCREMENT COMMENT '提示词ID',
+  `id` varchar(32) NOT NULL DEFAULT (REPLACE(UUID(), '-', '')) COMMENT '提示词ID',
   `title` varchar(100) NOT NULL COMMENT '标题',
   `content` text NOT NULL COMMENT '提示词内容',
   `image_url` varchar(255) DEFAULT NULL COMMENT '效果图片URL',
@@ -51,7 +52,7 @@ CREATE TABLE `prompt` (
 
 -- 提示词标签关联表
 CREATE TABLE `prompt_tag` (
-  `id` varchar(32) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `id` varchar(32) NOT NULL DEFAULT (REPLACE(UUID(), '-', '')) COMMENT 'ID',
   `prompt_id` varchar(32) NOT NULL COMMENT '提示词ID',
   `tag_id` varchar(32) NOT NULL COMMENT '标签ID',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -62,7 +63,7 @@ CREATE TABLE `prompt_tag` (
 
 -- 收藏表
 CREATE TABLE `favorite` (
-  `id` varchar(32) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `id` varchar(32) NOT NULL DEFAULT (REPLACE(UUID(), '-', '')) COMMENT 'ID',
   `user_id` varchar(32) NOT NULL COMMENT '用户ID',
   `prompt_id` varchar(32) NOT NULL COMMENT '提示词ID',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -73,7 +74,7 @@ CREATE TABLE `favorite` (
 
 -- 点赞/点踩表
 CREATE TABLE `vote` (
-  `id` varchar(32) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `id` varchar(32) NOT NULL DEFAULT (REPLACE(UUID(), '-', '')) COMMENT 'ID',
   `user_id` varchar(32) NOT NULL COMMENT '用户ID',
   `prompt_id` varchar(32) NOT NULL COMMENT '提示词ID',
   `type` tinyint(1) NOT NULL COMMENT '类型：1-点赞，-1-点踩',
@@ -86,7 +87,7 @@ CREATE TABLE `vote` (
 
 -- 举报表
 CREATE TABLE `report` (
-  `id` varchar(32) NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `id` varchar(32) NOT NULL DEFAULT (REPLACE(UUID(), '-', '')) COMMENT 'ID',
   `user_id` varchar(32) NOT NULL COMMENT '举报用户ID',
   `prompt_id` varchar(32) NOT NULL COMMENT '被举报提示词ID',
   `reason` varchar(255) NOT NULL COMMENT '举报理由',

@@ -32,7 +32,7 @@ public class UserController {
      * 用户注册
      */
     @PostMapping("/register")
-    public Result register(@RequestBody @Validated UserRegisterDTO registerDTO) {
+    public Result<?> register(@RequestBody @Validated UserRegisterDTO registerDTO) {
         try {
             UserVO userVO = userService.register(registerDTO);
             return Result.success(userVO);
@@ -45,7 +45,7 @@ public class UserController {
      * 用户登录
      */
     @PostMapping("/login")
-    public Result login(@RequestBody @Validated UserLoginDTO loginDTO) {
+    public Result<?> login(@RequestBody @Validated UserLoginDTO loginDTO) {
         try {
             UserVO userVO = userService.login(loginDTO);
             return Result.success(userVO);
@@ -59,11 +59,12 @@ public class UserController {
      */
     @GetMapping("/info")
     @RequiresAuthentication
-    public Result getUserInfo(HttpServletRequest request) {
+    public Result<?> getUserInfo(HttpServletRequest request) {
         try {
             String token = request.getHeader("Authorization");
             String  userId = jwtUtil.getUserId(token);
             UserVO userVO = userService.getUserInfo(userId);
+            userVO.setToken(token);
             return Result.success(userVO);
         } catch (Exception e) {
             return Result.error(e.getMessage());
@@ -73,9 +74,9 @@ public class UserController {
     /**
      * 更新用户信息
      */
-    @PutMapping("/info")
+    @PostMapping("/update")
     @RequiresAuthentication
-    public Result updateUserInfo(@RequestBody Map<String, Object> params, HttpServletRequest request) {
+    public Result<?> updateUserInfo(@RequestBody Map<String, Object> params, HttpServletRequest request) {
         try {
             String token = request.getHeader("Authorization");
             String  userId = jwtUtil.getUserId(token);
@@ -102,7 +103,7 @@ public class UserController {
      */
     @PostMapping("/logout")
     @RequiresAuthentication
-    public Result logout() {
+    public Result<?> logout() {
         SecurityUtils.getSubject().logout();
         return Result.success("登出成功");
     }
