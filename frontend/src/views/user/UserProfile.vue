@@ -14,11 +14,13 @@
           @finish="handleSubmit"
         >
           <div class="avatar-section">
-            <a-avatar :src="avatarUrl" :size="100" />
+            <a-avatar  :src="avatarUrl" :size="100" />
             <div class="avatar-upload">
               <a-upload
                 name="avatar"
+                :data = "requestData"
                 :show-upload-list="false"
+                action="http://localhost:8000/api/file/upload"
                 :before-upload="beforeUpload"
                 @change="handleAvatarChange"
               >
@@ -36,10 +38,6 @@
           
           <a-form-item label="邮箱" name="email">
             <a-input v-model:value="formData.email" />
-          </a-form-item>
-          
-          <a-form-item label="旧密码" name="oldPassword">
-            <a-input-password v-model:value="formData.oldPassword" placeholder="留空表示不修改密码" />
           </a-form-item>
           
           <a-form-item label="新密码" name="newPassword">
@@ -65,18 +63,17 @@
 import { ref, reactive, onMounted } from 'vue'
 import { message } from 'ant-design-vue'
 import { UploadOutlined } from '@ant-design/icons-vue'
-import { useUserStore } from '../../stores/user'
-import api from '../../api'
+import { useUserStore } from '@/stores/user'
+import * as api from '../../api'
 
 const userStore = useUserStore()
 const loading = ref(false)
+const requestData = ref({directory:"avatar"})
 const avatarUrl = ref(userStore.userInfo.avatar || '/avatar-default.png')
-
 // 表单数据
 const formData = reactive({
   username: userStore.userInfo.username || '',
   email: userStore.userInfo.email || '',
-  oldPassword: '',
   newPassword: '',
   confirmPassword: ''
 })
@@ -110,18 +107,6 @@ const rules = {
       },
       trigger: 'blur'
     }
-  ],
-  oldPassword: [
-    {
-      validator: (_, value) => {
-        if (!formData.newPassword || formData.newPassword.length === 0) return Promise.resolve()
-        if (!value || value.length === 0) {
-          return Promise.reject(new Error('修改密码时必须输入旧密码'))
-        }
-        return Promise.resolve()
-      },
-      trigger: 'blur'
-    }
   ]
 }
 
@@ -130,14 +115,16 @@ const beforeUpload = (file) => {
   const isImage = file.type.startsWith('image/')
   if (!isImage) {
     message.error('只能上传图片文件!')
+    return false;
   }
   
   const isLt2M = file.size / 1024 / 1024 < 2
   if (!isLt2M) {
     message.error('图片大小不能超过2MB!')
+    return false;
   }
-  
-  return false // 阻止自动上传，改为手动上传
+  requestData.value.file = file;
+  return true; // 阻止自动上传，改为手动上传
 }
 
 // 处理头像变化
@@ -148,8 +135,9 @@ const handleAvatarChange = (info) => {
   if (info.file.status === 'done') {
     message.success(`${info.file.name} 上传成功`)
     // 更新头像URL
-    avatarUrl.value = info.file.response.url
-    formData.avatar = info.file.response.url
+
+    avatarUrl.value = info.file.response.data.url
+    formData.avatar = info.file.response.data.url
   } else if (info.file.status === 'error') {
     message.error(`${info.file.name} 上传失败`)
   }
@@ -158,7 +146,8 @@ const handleAvatarChange = (info) => {
 // 获取用户信息
 const fetchUserInfo = async () => {
   try {
-    const res = await api.user.getUserInfo()
+    const res = await api.getUserInfo()
+    console.log(res)
     if (res.code === 200) {
       formData.username = res.data.username
       formData.email = res.data.email
@@ -172,7 +161,7 @@ const fetchUserInfo = async () => {
 // 提交表单
 const handleSubmit = async () => {
   loading.value = true
-  
+  console.log(formData)
   try {
     // 构建更新数据
     const updateData = {
@@ -180,8 +169,7 @@ const handleSubmit = async () => {
     }
     
     // 如果有修改密码
-    if (formData.newPassword && formData.oldPassword) {
-      updateData.oldPassword = formData.oldPassword
+    if (formData.newPassword) {
       updateData.newPassword = formData.newPassword
     }
     
@@ -190,11 +178,10 @@ const handleSubmit = async () => {
       updateData.avatar = formData.avatar
     }
     
-    const res = await api.user.updateUserInfo(updateData)
+    const res = await api.updateUserInfo(updateData)
     if (res.code === 200) {
       message.success('个人信息更新成功')
       // 清空密码字段
-      formData.oldPassword = ''
       formData.newPassword = ''
       formData.confirmPassword = ''
       // 刷新用户信息

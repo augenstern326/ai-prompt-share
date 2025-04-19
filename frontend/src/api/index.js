@@ -1,5 +1,6 @@
 import request from '@/utils/request';
 
+
 // 用户登录
 export function login(data) {
   return request({
@@ -18,6 +19,14 @@ export function register(data) {
   });
 }
 
+// 用户登出
+export function logout() {
+  return request({
+    url: '/user/logout',
+    method: 'post'
+  });
+}
+
 // 获取用户信息
 export function getUserInfo() {
   return request({
@@ -30,7 +39,7 @@ export function getUserInfo() {
 export function updateUserInfo(data) {
   return request({
     url: '/user/update',
-    method: 'put',
+    method: 'post',
     data
   });
 }
@@ -255,3 +264,4 @@ export function handleReport(id, data) {
     data
   });
 }
+

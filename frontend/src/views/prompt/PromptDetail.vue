@@ -120,7 +120,7 @@ import { ref, computed, reactive, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useUserStore } from '../../stores/user'
 import { message } from 'ant-design-vue'
-import api from '../../api'
+import * as api from '../../api'
 import { 
   LikeOutlined, 
   DislikeOutlined, 
@@ -146,7 +146,7 @@ const reportForm = reactive({
 const fetchPromptDetail = async () => {
   loading.value = true
   try {
-    const res = await api.prompt.getPromptDetail(route.params.id)
+    const res = await api.getPromptDetail(route.params.id)
     if (res.code === 200) {
       prompt.value = res.data
     } else {
@@ -176,7 +176,7 @@ const handleLike = async () => {
   try {
     if (prompt.value.liked) {
       // 取消点赞
-      const res = await api.prompt.cancelVote(prompt.value.id)
+      const res = await api.cancelVote(prompt.value.id)
       if (res.code === 200) {
         prompt.value.liked = false
         prompt.value.likeCount--
@@ -184,7 +184,7 @@ const handleLike = async () => {
       }
     } else {
       // 点赞
-      const res = await api.prompt.likePrompt(prompt.value.id)
+      const res = await api.likePrompt(prompt.value.id)
       if (res.code === 200) {
         prompt.value.liked = true
         prompt.value.likeCount++
@@ -213,7 +213,7 @@ const handleDislike = async () => {
   try {
     if (prompt.value.disliked) {
       // 取消点踩
-      const res = await api.prompt.cancelVote(prompt.value.id)
+      const res = await api.cancelVote(prompt.value.id)
       if (res.code === 200) {
         prompt.value.disliked = false
         prompt.value.dislikeCount--
@@ -250,7 +250,7 @@ const handleFavorite = async () => {
   try {
     if (prompt.value.favorited) {
       // 取消收藏
-      const res = await api.prompt.cancelFavorite(prompt.value.id)
+      const res = await api.cancelFavorite(prompt.value.id)
       if (res.code === 200) {
         prompt.value.favorited = false
         prompt.value.favoriteCount--
@@ -258,7 +258,7 @@ const handleFavorite = async () => {
       }
     } else {
       // 收藏
-      const res = await api.prompt.favoritePrompt(prompt.value.id)
+      const res = await api.favoritePrompt(prompt.value.id)
       if (res.code === 200) {
         prompt.value.favorited = true
         prompt.value.favoriteCount++
@@ -289,7 +289,7 @@ const handleEdit = () => {
 // 删除提示词
 const handleDelete = async () => {
   try {
-    const res = await api.prompt.deletePrompt(prompt.value.id)
+    const res = await api.deletePrompt(prompt.value.id)
     if (res.code === 200) {
       message.success('删除成功')
       router.push('/prompt/square')
@@ -319,7 +319,7 @@ const submitReport = async () => {
   
   reportLoading.value = true
   try {
-    const res = await api.prompt.reportPrompt({
+    const res = await api.reportPrompt({
       promptId: prompt.value.id,
       reason: reportForm.reason
     })

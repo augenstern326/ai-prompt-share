@@ -147,7 +147,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import { message } from 'ant-design-vue'
 import { ReloadOutlined } from '@ant-design/icons-vue'
-import api from '../../api'
+import * as api from '../../api'
 
 // 表格列定义
 const columns = [

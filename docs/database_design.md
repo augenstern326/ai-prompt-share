@@ -10,7 +10,7 @@
 
 | 字段名 | 类型 | 说明 |
 |-------|------|------|
-| id | bigint(20) | 主键，用户ID |
+| id | varchar(32) | 主键，用户ID |
 | username | varchar(50) | 用户名，唯一 |
 | password | varchar(100) | 密码（加密存储） |
 | email | varchar(100) | 邮箱，唯一 |
@@ -26,7 +26,7 @@
 
 | 字段名 | 类型 | 说明 |
 |-------|------|------|
-| id | bigint(20) | 主键，标签ID |
+| id | varchar(32) | 主键，标签ID |
 | name | varchar(50) | 标签名称，唯一 |
 | type | tinyint(1) | 标签类型：0-系统预设，1-用户创建 |
 | create_time | datetime | 创建时间 |
@@ -38,11 +38,11 @@
 
 | 字段名 | 类型 | 说明 |
 |-------|------|------|
-| id | bigint(20) | 主键，提示词ID |
+| id | varchar(32) | 主键，提示词ID |
 | title | varchar(100) | 标题 |
 | content | text | 提示词内容 |
 | image_url | varchar(255) | 效果图片URL |
-| user_id | bigint(20) | 创建用户ID |
+| user_id | varchar(32) | 创建用户ID |
 | like_count | int(11) | 点赞数 |
 | dislike_count | int(11) | 点踩数 |
 | favorite_count | int(11) | 收藏数 |
@@ -57,9 +57,9 @@
 
 | 字段名 | 类型 | 说明 |
 |-------|------|------|
-| id | bigint(20) | 主键 |
-| prompt_id | bigint(20) | 提示词ID |
-| tag_id | bigint(20) | 标签ID |
+| id | varchar(32) | 主键 |
+| prompt_id | varchar(32) | 提示词ID |
+| tag_id | varchar(32) | 标签ID |
 | create_time | datetime | 创建时间 |
 
 ### 5. 收藏表 (favorite)
@@ -67,9 +67,9 @@
 
 | 字段名 | 类型 | 说明 |
 |-------|------|------|
-| id | bigint(20) | 主键 |
-| user_id | bigint(20) | 用户ID |
-| prompt_id | bigint(20) | 提示词ID |
+| id | varchar(32) | 主键 |
+| user_id | varchar(32) | 用户ID |
+| prompt_id | varchar(32) | 提示词ID |
 | create_time | datetime | 创建时间 |
 
 ### 6. 点赞/点踩表 (vote)
@@ -77,9 +77,9 @@
 
 | 字段名 | 类型 | 说明 |
 |-------|------|------|
-| id | bigint(20) | 主键 |
-| user_id | bigint(20) | 用户ID |
-| prompt_id | bigint(20) | 提示词ID |
+| id | varchar(32) | 主键 |
+| user_id | varchar(32) | 用户ID |
+| prompt_id | varchar(32) | 提示词ID |
 | type | tinyint(1) | 类型：1-点赞，-1-点踩 |
 | create_time | datetime | 创建时间 |
 | update_time | datetime | 更新时间 |
@@ -89,9 +89,9 @@
 
 | 字段名 | 类型 | 说明 |
 |-------|------|------|
-| id | bigint(20) | 主键 |
-| user_id | bigint(20) | 举报用户ID |
-| prompt_id | bigint(20) | 被举报提示词ID |
+| id | varchar(32) | 主键 |
+| user_id | varchar(32) | 举报用户ID |
+| prompt_id | varchar(32) | 被举报提示词ID |
 | reason | varchar(255) | 举报理由 |
 | status | tinyint(1) | 状态：0-未处理，1-已处理 |
 | handle_result | varchar(255) | 处理结果 |
