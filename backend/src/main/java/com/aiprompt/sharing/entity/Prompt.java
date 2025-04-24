@@ -7,7 +7,8 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.util.Date;
+
 
 /**
  * 提示词实体类
@@ -72,12 +73,12 @@ public class Prompt implements Serializable {
     /**
      * 创建时间
      */
-    private LocalDateTime createTime;
+    private Date createTime;
     
     /**
      * 更新时间
      */
-    private LocalDateTime updateTime;
+    private Date updateTime;
     
     /**
      * 是否删除：0-未删除，1-已删除

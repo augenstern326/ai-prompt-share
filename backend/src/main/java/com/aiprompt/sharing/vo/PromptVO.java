@@ -2,7 +2,7 @@ package com.aiprompt.sharing.vo;
 
 import lombok.Data;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -89,5 +89,5 @@ public class PromptVO {
     /**
      * 创建时间
      */
-    private LocalDateTime createTime;
+    private Date createTime;
 }

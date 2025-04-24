@@ -10,7 +10,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,7 +35,7 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
         tag.setName(createDTO.getName());
         tag.setType(createDTO.getType()); // 0-系统预设，1-用户创建
         tag.setUserId(userId);
-        tag.setCreateTime(LocalDateTime.now());
+        tag.setCreateTime(new Date());
         
         save(tag);
         return tag.getId();

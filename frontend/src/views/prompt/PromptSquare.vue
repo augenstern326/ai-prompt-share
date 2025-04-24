@@ -50,7 +50,7 @@
                 <router-link :to="`/prompt/detail/${prompt.id}`">
                   <div class="prompt-card">
                     <div class="prompt-card-image">
-                      <img :src="prompt.imageUrl || '/default-prompt.jpg'" :alt="prompt.title" />
+                      <img :src="prompt.imageUrl" :alt="prompt.title" />
                     </div>
                     <div class="prompt-card-content">
                       <h3 class="prompt-card-title">{{ prompt.title }}</h3>
@@ -59,12 +59,12 @@
                       </div>
                       <div class="prompt-card-footer">
                         <div class="prompt-card-stats">
-                          <span><a-icon type="like" /> {{ prompt.likeCount }}</span>
-                          <span><a-icon type="dislike" /> {{ prompt.dislikeCount }}</span>
-                          <span><a-icon type="star" /> {{ prompt.favoriteCount }}</span>
+                          <span><like-outlined /> {{ prompt.likeCount }}</span>
+                          <span><dislike-outlined /> {{ prompt.dislikeCount }}</span>
+                          <span><star-outlined /> {{ prompt.favoriteCount }}</span>
                         </div>
                         <div class="prompt-card-user">
-                          <a-avatar :src="prompt.userAvatar || '/avatar-default.png'" size="small" />
+                          <a-avatar :src="prompt.userAvatar" size="small" />
                           <span>{{ prompt.username }}</span>
                         </div>
                       </div>
@@ -108,7 +108,12 @@ const searchKeyword = ref('')
 const selectedTags = ref([])
 const tagOptions = ref([])
 const sortType = ref(0)
+import {
+  LikeOutlined,
+  DislikeOutlined,
+  StarOutlined
 
+} from '@ant-design/icons-vue'
 // 获取标签列表
 const fetchTags = async () => {
   try {

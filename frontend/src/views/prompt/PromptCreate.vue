@@ -28,32 +28,35 @@
           <a-form-item label="标签" name="tagIds">
             <a-select
               v-model:value="formData.tagIds"
-              mode="multiple"
+              mode="tags"
               placeholder="选择或创建标签"
               :options="tagOptions"
               :loading="tagsLoading"
               :tokenSeparators="[',']"
               @change="handleTagChange"
+              @search="handleTagSearch"
+              showSearch
             >
-<!--              <template #dropdownRender="{ menuNode: menu }">-->
-<!--                <div>-->
-<!--                  {{ menu }}-->
-<!--                  <a-divider style="margin: 4px 0" />-->
-<!--                  <div style="padding: 8px; cursor: pointer">-->
-<!--                    <a-input-->
-<!--                      v-model:value="newTagName"-->
-<!--                      placeholder="输入新标签名称"-->
-<!--                      @pressEnter="addTag"-->
-<!--                    >-->
-<!--                      <template #suffix>-->
-<!--                        <a-button type="link" @click="addTag">添加</a-button>-->
-<!--                      </template>-->
-<!--                    </a-input>-->
-<!--                  </div>-->
-<!--                </div>-->
-<!--              </template>-->
+              <template #dropdownRender="{ menuNode: menu }">
+                <div>
+                  {{ menu }}
+                  <a-divider style="margin: 4px 0" />
+                  <div style="padding: 8px; cursor: pointer">
+                    <a-input
+                      v-model:value="newTagName"
+                      placeholder="输入新标签名称"
+                      @pressEnter="addTag"
+                    >
+                      <template #suffix>
+                        <a-button type="link" @click="addTag">添加</a-button>
+                      </template>
+                    </a-input>
+                  </div>
+                </div>
+              </template>
             </a-select>
           </a-form-item>
+
 
           <a-form-item label="效果图片" name="imageUrl">
             <a-upload
@@ -103,16 +106,18 @@ const route = useRoute()
 const router = useRouter()
 const isEdit = computed(() => route.path.includes('/edit/'))
 const promptId = computed(() => isEdit.value ? route.params.id : null)
-
 const submitLoading = ref(false)
 const tagsLoading = ref(false)
 const tagOptions = ref([])
-// const newTagName = ref('')
+const newTagName = ref('')
 const fileList = ref([])
 const previewVisible = ref(false)
 const previewImage = ref('')
 const previewTitle = ref('')
-
+const handleTagSearch = (val) => {
+  // 可以在这里实现远程搜索逻辑
+  console.log('Searching:', val);
+};
 // 表单数据
 const formData = reactive({
   title: '',
@@ -153,32 +158,32 @@ const fetchTags = async () => {
   }
 }
 
-// 添加新标签
-// const addTag = async () => {
-//   if (!newTagName.value) {
-//     message.warning('请输入标签名称')
-//     return
-//   }
-//
-//   try {
-//     const res = await api.createTag({
-//       name: newTagName.value,
-//       type: 1 // 用户创建
-//     })
-//     if (res.code === 200) {
-//       const newTagId = res.data
-//       tagOptions.value.push({
-//         label: newTagName.value,
-//         value: newTagId
-//       })
-//       formData.tagIds.push(newTagId)
-//       newTagName.value = ''
-//       message.success('标签创建成功')
-//     }
-//   } catch (error) {
-//     message.error('创建标签失败，请稍后重试')
-//   }
-// }
+//添加新标签
+const addTag = async () => {
+  if (!newTagName.value) {
+    message.warning('请输入标签名称')
+    return
+  }
+
+  try {
+    const res = await api.createTag({
+      name: newTagName.value,
+      type: 1 // 用户创建
+    })
+    if (res.code === 200) {
+      const newTagId = res.data
+      tagOptions.value.push({
+        label: newTagName.value,
+        value: newTagId
+      })
+      formData.tagIds.push(newTagId)
+      newTagName.value = ''
+      message.success('标签创建成功')
+    }
+  } catch (error) {
+    message.error('创建标签失败，请稍后重试')
+  }
+}
 
 // 处理标签变化
 const handleTagChange = (value) => {
@@ -225,12 +230,6 @@ const getBase64 = (file) => {
   })
 }
 
-// 上传图片
-// const uploadImage = async (file) => {
-//   // 注意：这里应该调用MinIO上传接口，但由于MinIO集成在步骤9中完成，这里先模拟
-//   // 实际项目中，这里应该调用后端的图片上传接口
-//   return Promise.resolve(`/uploads/${file.name}`) // 模拟返回图片URL
-// }
 
 // 获取提示词详情（编辑模式）
 const fetchPromptDetail = async () => {
@@ -267,7 +266,8 @@ const handleSubmit = async () => {
   try {
     // 上传图片（如果有）
     if (fileList.value.length > 0 && fileList.value[0].originFileObj) {
-      //formData.imageUrl = fileList.value.
+      console.log(fileList)
+        //formData.imageUrl = fileList.value.
     }
 
     let res

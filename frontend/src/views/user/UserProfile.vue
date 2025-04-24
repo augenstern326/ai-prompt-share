@@ -135,7 +135,6 @@ const handleAvatarChange = (info) => {
   if (info.file.status === 'done') {
     message.success(`${info.file.name} 上传成功`)
     // 更新头像URL
-
     avatarUrl.value = info.file.response.data.url
     formData.avatar = info.file.response.data.url
   } else if (info.file.status === 'error') {
@@ -151,7 +150,7 @@ const fetchUserInfo = async () => {
     if (res.code === 200) {
       formData.username = res.data.username
       formData.email = res.data.email
-      avatarUrl.value = res.data.avatar || '/avatar-default.png'
+      avatarUrl.value = res.data.avatar
     }
   } catch (error) {
     message.error('获取用户信息失败')

@@ -1,6 +1,7 @@
 package com.aiprompt.sharing.service.impl;
 
 import com.aiprompt.sharing.config.MinioConfig;
+import com.aiprompt.sharing.filter.StrAttackFilter;
 import com.aiprompt.sharing.service.FileService;
 import io.minio.*;
 import io.minio.errors.*;
@@ -11,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLDecoder;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.UUID;
@@ -43,6 +45,7 @@ public class FileServiceImpl implements FileService {
         
         // 生成文件名
         String originalFilename = file.getOriginalFilename();
+        originalFilename = StrAttackFilter.filter(originalFilename); //防止特殊字符攻击
         String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
         String filename = UUID.randomUUID().toString().replaceAll("-", "") + extension;
         String objectName = directory + "/" + filename;
@@ -77,10 +80,9 @@ public class FileServiceImpl implements FileService {
                 .bucket(minioConfig.getBucketName())
                 .object(objectName)
                 .method(Method.GET)
-                .expiry(7, TimeUnit.DAYS)
                 .build());
         
-        return url;
+        return URLDecoder.decode(url,"UTF-8");
     }
 
     @Override

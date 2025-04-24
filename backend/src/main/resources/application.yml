@@ -42,7 +42,7 @@ shiro:
 
 # MinIO配置
 minio:
-  endpoint: http://localhost:9000
+  endpoint: http://localhost:9090
   accessKey: minioadmin
   secretKey: minioadmin
   bucketName: ai-prompt-sharing

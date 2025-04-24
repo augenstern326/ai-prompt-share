@@ -14,7 +14,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
+import java.util.Date;
+
 
 /**
  * 用户服务实现类
@@ -55,8 +56,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         user.setPassword(encryptedPassword);
         user.setRole("user"); // 默认为普通用户
         user.setStatus(1); // 默认状态为正常
-        user.setCreateTime(LocalDateTime.now());
-        user.setUpdateTime(LocalDateTime.now());
+        user.setCreateTime(new Date());
+        user.setUpdateTime(new Date());
 
         // 保存用户
         save(user);

@@ -1,3 +1,10 @@
+-- 创建数据库
+CREATE DATABASE ai_prompt_sharing
+CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- 使用数据库
+USE ai_prompt_sharing;
+
 -- 用户表
 CREATE TABLE `user` (
   `id` varchar(32) NOT NULL DEFAULT (REPLACE(UUID(), '-', '')) COMMENT '用户ID',

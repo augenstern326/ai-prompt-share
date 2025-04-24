@@ -91,6 +91,10 @@
                     删除
                   </a-button>
                 </a-popconfirm>
+                <a-button type="primary" @click="handleReturn">
+                  <template #icon><edit-outlined /></template>
+                  返回
+                </a-button>
               </div>
             </div>
           </div>
@@ -118,7 +122,7 @@
 <script setup>
 import { ref, computed, reactive, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { useUserStore } from '../../stores/user'
+import { useUserStore } from '@/stores/user'
 import { message } from 'ant-design-vue'
 import * as api from '../../api'
 import { 
@@ -149,6 +153,7 @@ const fetchPromptDetail = async () => {
     const res = await api.getPromptDetail(route.params.id)
     if (res.code === 200) {
       prompt.value = res.data
+      console.log(res.data)
     } else {
       message.error('获取提示词详情失败')
     }

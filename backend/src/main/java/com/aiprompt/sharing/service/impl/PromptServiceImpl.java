@@ -13,17 +13,17 @@ import com.aiprompt.sharing.mapper.VoteMapper;
 import com.aiprompt.sharing.service.PromptService;
 import com.aiprompt.sharing.vo.PromptVO;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import org.springframework.beans.BeanUtils;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -60,8 +60,8 @@ public class PromptServiceImpl extends ServiceImpl<PromptMapper, Prompt> impleme
         prompt.setDislikeCount(0);
         prompt.setFavoriteCount(0);
         prompt.setStatus(1); // 正常状态
-        prompt.setCreateTime(LocalDateTime.now());
-        prompt.setUpdateTime(LocalDateTime.now());
+        prompt.setCreateTime(new Date());
+        prompt.setUpdateTime(new Date());
         
         // 保存提示词
 
@@ -151,7 +151,7 @@ public class PromptServiceImpl extends ServiceImpl<PromptMapper, Prompt> impleme
         if (updateDTO.getImageUrl() != null) {
             prompt.setImageUrl(updateDTO.getImageUrl());
         }
-        prompt.setUpdateTime(LocalDateTime.now());
+        prompt.setUpdateTime(new Date());
         
         updateById(prompt);
         
@@ -211,7 +211,7 @@ public class PromptServiceImpl extends ServiceImpl<PromptMapper, Prompt> impleme
             } else {
                 // 已点踩，修改为点赞
                 vote.setType(1);
-                vote.setUpdateTime(LocalDateTime.now());
+                vote.setUpdateTime(new Date());
                 voteMapper.updateById(vote);
                 
                 // 更新提示词点赞/点踩数
@@ -225,8 +225,8 @@ public class PromptServiceImpl extends ServiceImpl<PromptMapper, Prompt> impleme
             vote.setPromptId(promptId);
             vote.setUserId(userId);
             vote.setType(1); // 点赞
-            vote.setCreateTime(LocalDateTime.now());
-            vote.setUpdateTime(LocalDateTime.now());
+            vote.setCreateTime(new Date());
+            vote.setUpdateTime(new Date());
             voteMapper.insert(vote);
             
             // 更新提示词点赞数
@@ -258,7 +258,7 @@ public class PromptServiceImpl extends ServiceImpl<PromptMapper, Prompt> impleme
             } else {
                 // 已点赞，修改为点踩
                 vote.setType(-1);
-                vote.setUpdateTime(LocalDateTime.now());
+                vote.setUpdateTime(new Date());
                 voteMapper.updateById(vote);
                 
                 // 更新提示词点赞/点踩数
@@ -272,8 +272,8 @@ public class PromptServiceImpl extends ServiceImpl<PromptMapper, Prompt> impleme
             vote.setPromptId(promptId);
             vote.setUserId(userId);
             vote.setType(-1); // 点踩
-            vote.setCreateTime(LocalDateTime.now());
-            vote.setUpdateTime(LocalDateTime.now());
+            vote.setCreateTime(new Date());
+            vote.setUpdateTime(new Date());
             voteMapper.insert(vote);
             
             // 更新提示词点踩数
@@ -333,7 +333,7 @@ public class PromptServiceImpl extends ServiceImpl<PromptMapper, Prompt> impleme
             favorite = new Favorite();
             favorite.setPromptId(promptId);
             favorite.setUserId(userId);
-            favorite.setCreateTime(LocalDateTime.now());
+            favorite.setCreateTime(new Date());
             favoriteMapper.insert(favorite);
             
             // 更新提示词收藏数
@@ -383,7 +383,7 @@ public class PromptServiceImpl extends ServiceImpl<PromptMapper, Prompt> impleme
         
         // 恢复提示词（将状态设为正常）
         prompt.setStatus(1);
-        prompt.setUpdateTime(LocalDateTime.now());
+        prompt.setUpdateTime(new Date());
         updateById(prompt);
     }
 }
