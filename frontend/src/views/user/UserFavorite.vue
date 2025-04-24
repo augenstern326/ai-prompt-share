@@ -20,7 +20,7 @@
                     <div class="prompt-card-content">
                       <h3 class="prompt-card-title">{{ prompt.title }}</h3>
                       <div class="prompt-card-tags">
-                        <span v-for="tag in prompt.tags.slice(0, 3)" :key="tag.id" class="tag">{{ tag.name }}</span>
+<!--                        <span v-for="tag in prompt.tags.slice(0, 3)" :key="tag.id" class="tag">{{ tag.name }}</span>-->
                       </div>
                       <div class="prompt-card-footer">
                         <div class="prompt-card-stats">
@@ -65,7 +65,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { message } from 'ant-design-vue'
-import api from '../../api'
+import * as api from '../../api'
 
 const loading = ref(false)
 const prompts = ref([])
@@ -77,7 +77,7 @@ const size = ref(12)
 const fetchFavorites = async () => {
   loading.value = true
   try {
-    const res = await api.prompt.getFavoriteList({
+    const res = await api.getFavoriteList({
       current: current.value,
       size: size.value
     })
@@ -96,7 +96,7 @@ const fetchFavorites = async () => {
 // 取消收藏
 const cancelFavorite = async (promptId) => {
   try {
-    const res = await api.prompt.cancelFavorite(promptId)
+    const res = await api.cancelFavorite(promptId)
     if (res.code === 200) {
       message.success('已取消收藏')
       // 从列表中移除

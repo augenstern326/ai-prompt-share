@@ -83,6 +83,5 @@ public class Prompt implements Serializable {
     /**
      * 是否删除：0-未删除，1-已删除
      */
-    @TableLogic
     private Integer deleted;
 }

@@ -37,36 +37,38 @@
               @search="handleTagSearch"
               showSearch
             >
-              <template #dropdownRender="{ menuNode: menu }">
-                <div>
-                  {{ menu }}
-                  <a-divider style="margin: 4px 0" />
-                  <div style="padding: 8px; cursor: pointer">
-                    <a-input
-                      v-model:value="newTagName"
-                      placeholder="输入新标签名称"
-                      @pressEnter="addTag"
-                    >
-                      <template #suffix>
-                        <a-button type="link" @click="addTag">添加</a-button>
-                      </template>
-                    </a-input>
-                  </div>
-                </div>
-              </template>
+<!--              <template #dropdownRender="{ menuNode: menu }">-->
+<!--                <div>-->
+<!--                  {{ menu }}-->
+<!--                  <a-divider style="margin: 4px 0" />-->
+<!--                  <div style="padding: 8px; cursor: pointer">-->
+<!--                    <a-input-->
+<!--                      v-model:value="newTagName"-->
+<!--                      placeholder="输入新标签名称"-->
+<!--                      @pressEnter="addTag"-->
+<!--                    >-->
+<!--                      <template #suffix>-->
+<!--                        <a-button type="link" @click="addTag">添加</a-button>-->
+<!--                      </template>-->
+<!--                    </a-input>-->
+<!--                  </div>-->
+<!--                </div>-->
+<!--              </template>-->
             </a-select>
           </a-form-item>
 
 
           <a-form-item label="效果图片" name="imageUrl">
             <a-upload
-              v-model:fileList="fileList"
-              list-type="picture-card"
-              :before-upload="beforeUpload"
-              @preview="handlePreview"
-              @change="handleChange"
-              :maxCount="1"
-              action="http://localhost:8000/api/file/upload"
+                :maxCount="1"
+                v-model:fileList="fileList"
+                list-type="picture-card"
+                :data = "requestData"
+                :show-upload-list="true"
+                action="http://localhost:8000/api/file/upload"
+                :before-upload="beforeUpload"
+                @change="handleChange"
+                @preview="handlePreview"
             >
               <div v-if="fileList.length < 1">
                 <upload-outlined />
@@ -74,10 +76,10 @@
               </div>
             </a-upload>
             <a-modal
-              :visible="previewVisible"
-              :title="previewTitle"
-              :footer="null"
-              @cancel="previewVisible = false"
+                :visible="previewVisible"
+                :title="previewTitle"
+                :footer="null"
+                @cancel="previewVisible = false"
             >
               <img alt="预览图片" style="width: 100%" :src="previewImage" />
             </a-modal>
@@ -109,7 +111,8 @@ const promptId = computed(() => isEdit.value ? route.params.id : null)
 const submitLoading = ref(false)
 const tagsLoading = ref(false)
 const tagOptions = ref([])
-const newTagName = ref('')
+const requestData = ref({directory:"prompt"})
+// const newTagName = ref('')
 const fileList = ref([])
 const previewVisible = ref(false)
 const previewImage = ref('')
@@ -125,6 +128,7 @@ const formData = reactive({
   tagIds: [],
   imageUrl: ''
 })
+
 
 // 表单验证规则
 const rules = {
@@ -159,31 +163,31 @@ const fetchTags = async () => {
 }
 
 //添加新标签
-const addTag = async () => {
-  if (!newTagName.value) {
-    message.warning('请输入标签名称')
-    return
-  }
-
-  try {
-    const res = await api.createTag({
-      name: newTagName.value,
-      type: 1 // 用户创建
-    })
-    if (res.code === 200) {
-      const newTagId = res.data
-      tagOptions.value.push({
-        label: newTagName.value,
-        value: newTagId
-      })
-      formData.tagIds.push(newTagId)
-      newTagName.value = ''
-      message.success('标签创建成功')
-    }
-  } catch (error) {
-    message.error('创建标签失败，请稍后重试')
-  }
-}
+// const addTag = async () => {
+//   if (!newTagName.value) {
+//     message.warning('请输入标签名称')
+//     return
+//   }
+//
+//   try {
+//     const res = await api.createTag({
+//       name: newTagName.value,
+//       type: 1 // 用户创建
+//     })
+//     if (res.code === 200) {
+//       const newTagId = res.data
+//       tagOptions.value.push({
+//         label: newTagName.value,
+//         value: newTagId
+//       })
+//       formData.tagIds.push(newTagId)
+//       newTagName.value = ''
+//       message.success('标签创建成功')
+//     }
+//   } catch (error) {
+//     message.error('创建标签失败，请稍后重试')
+//   }
+// }
 
 // 处理标签变化
 const handleTagChange = (value) => {
@@ -195,14 +199,15 @@ const beforeUpload = (file) => {
   const isImage = file.type.startsWith('image/')
   if (!isImage) {
     message.error('只能上传图片文件!')
+    return false
   }
 
   const isLt2M = file.size / 1024 / 1024 < 2
   if (!isLt2M) {
     message.error('图片大小不能超过2MB!')
   }
-
-  return false // 阻止自动上传，改为手动上传
+  requestData.value.file = file;
+  return true;
 }
 
 // 处理图片预览
@@ -216,8 +221,17 @@ const handlePreview = async (file) => {
 }
 
 // 处理图片变化
-const handleChange = ({ fileList: newFileList }) => {
-  fileList.value = newFileList
+const handleChange = (info) => {
+  console.log(info.file)
+  if (info.file.status !== 'uploading') {
+    console.log(info.file, info.fileList)
+  }
+  if (info.file.status === 'done') {
+    message.success(`${info.file.name} 上传成功`)
+    formData.imageUrl = info.file.response.data.url
+  } else if (info.file.status === 'error') {
+    message.error(`${info.file.name} 上传失败`)
+  }
 }
 
 // 将文件转为Base64
@@ -264,12 +278,11 @@ const handleSubmit = async () => {
   submitLoading.value = true
 
   try {
-    // 上传图片（如果有）
-    if (fileList.value.length > 0 && fileList.value[0].originFileObj) {
-      console.log(fileList)
-        //formData.imageUrl = fileList.value.
-    }
-
+    // // 上传图片（如果有）
+    // if (fileList.value.length > 0 && fileList.value[0].originFileObj) {
+    //
+    // }
+    console.log(formData)
     let res
     if (isEdit.value) {
       // 更新提示词

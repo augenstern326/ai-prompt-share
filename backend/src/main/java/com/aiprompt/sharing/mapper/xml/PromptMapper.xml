@@ -2,12 +2,18 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.aiprompt.sharing.mapper.PromptMapper">
     <select id="getPromptVOList" resultType="com.aiprompt.sharing.vo.PromptVO">
-        select * from prompt
+        select prompt.*,user.username,user.avatar useravatar from prompt
+        left join user on user.id = prompt.user_id
+        where prompt.deleted = 0 and prompt.status = 1
     </select>
     <select id="getFavoritePromptVOList" resultType="com.aiprompt.sharing.vo.PromptVO">
-        select * from prompt
+        select prompt.*,user.username,user.avatar useravatar from favorite
+        left join prompt on favorite.prompt_id = prompt.id
+        left join user on favorite.user_id = user.id
     </select>
     <select id="getPromptVOById" resultType="com.aiprompt.sharing.vo.PromptVO">
-        select * from prompt where id = #{promptId}
+        select prompt.*,user.username,user.avatar useravatar from prompt
+        left join user on user.id = prompt.user_id
+        where prompt.deleted = 0 and prompt.status = 1 and prompt.id = #{promptId}
     </select>
 </mapper>

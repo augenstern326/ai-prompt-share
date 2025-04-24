@@ -69,7 +69,7 @@ import * as api from '../../api'
 const userStore = useUserStore()
 const loading = ref(false)
 const requestData = ref({directory:"avatar"})
-const avatarUrl = ref(userStore.userInfo.avatar || '/avatar-default.png')
+const avatarUrl = ref(userStore.userInfo.avatar)
 // 表单数据
 const formData = reactive({
   username: userStore.userInfo.username || '',
@@ -115,16 +115,16 @@ const beforeUpload = (file) => {
   const isImage = file.type.startsWith('image/')
   if (!isImage) {
     message.error('只能上传图片文件!')
-    return false;
+    return false
   }
   
   const isLt2M = file.size / 1024 / 1024 < 2
   if (!isLt2M) {
     message.error('图片大小不能超过2MB!')
-    return false;
+    return false
   }
   requestData.value.file = file;
-  return true; // 阻止自动上传，改为手动上传
+  return true;
 }
 
 // 处理头像变化

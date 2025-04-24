@@ -184,7 +184,7 @@ public class PromptServiceImpl extends ServiceImpl<PromptMapper, Prompt> impleme
         }
         
         // 逻辑删除提示词
-        prompt.setStatus(0); // 设置为删除状态
+        prompt.setDeleted(1);
         updateById(prompt);
     }
 
