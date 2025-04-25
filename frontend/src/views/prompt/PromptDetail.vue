@@ -91,10 +91,6 @@
                     删除
                   </a-button>
                 </a-popconfirm>
-                <a-button type="primary" @click="handleReturn">
-                  <template #icon><edit-outlined /></template>
-                  返回
-                </a-button>
               </div>
             </div>
           </div>
