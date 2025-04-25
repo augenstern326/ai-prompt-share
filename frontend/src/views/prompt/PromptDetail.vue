@@ -226,7 +226,7 @@ const handleDislike = async () => {
       }
     } else {
       // 点踩
-      const res = await api.prompt.dislikePrompt(prompt.value.id)
+      const res = await api.dislikePrompt(prompt.value.id)
       if (res.code === 200) {
         prompt.value.disliked = true
         prompt.value.dislikeCount++

@@ -3,7 +3,9 @@ package com.aiprompt.sharing.controller;
 import com.aiprompt.sharing.common.Result;
 import com.aiprompt.sharing.dto.PromptCreateDTO;
 import com.aiprompt.sharing.dto.PromptUpdateDTO;
+import com.aiprompt.sharing.mapper.PromptTagMapper;
 import com.aiprompt.sharing.service.PromptService;
+import com.aiprompt.sharing.service.PromptTagService;
 import com.aiprompt.sharing.util.JwtUtil;
 import com.aiprompt.sharing.vo.PromptVO;
 import com.baomidou.mybatisplus.core.metadata.IPage;
@@ -27,6 +29,10 @@ public class PromptController {
     
     @Autowired
     private JwtUtil jwtUtil;
+    @Autowired
+    private PromptTagService promptTagService;
+    @Autowired
+    private PromptTagMapper promptTagMapper;
 
     /**
      * 创建提示词

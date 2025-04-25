@@ -22,38 +22,36 @@
               v-model:value="formData.content"
               placeholder="请输入提示词内容"
               :rows="8"
+              :maxlength="1000"
+              :showCount="true"
+              :countProps="{ separator: '/' }"
             />
           </a-form-item>
 
           <a-form-item label="标签" name="tagIds">
             <a-select
-              v-model:value="formData.tagIds"
-              mode="tags"
-              placeholder="选择或创建标签"
-              :options="tagOptions"
-              :loading="tagsLoading"
-              :tokenSeparators="[',']"
-              @change="handleTagChange"
-              @search="handleTagSearch"
-              showSearch
+                mode="tags"
+                placeholder="选择或创建标签"
+                :max-tag-count="5"
+                :options="tagOptions"
+                :loading="tagsLoading"
+                :tokenSeparators="[',']"
+                show-search
+                @change="handleTagChange"
             >
-<!--              <template #dropdownRender="{ menuNode: menu }">-->
-<!--                <div>-->
-<!--                  {{ menu }}-->
-<!--                  <a-divider style="margin: 4px 0" />-->
-<!--                  <div style="padding: 8px; cursor: pointer">-->
-<!--                    <a-input-->
-<!--                      v-model:value="newTagName"-->
-<!--                      placeholder="输入新标签名称"-->
-<!--                      @pressEnter="addTag"-->
-<!--                    >-->
-<!--                      <template #suffix>-->
-<!--                        <a-button type="link" @click="addTag">添加</a-button>-->
-<!--                      </template>-->
-<!--                    </a-input>-->
-<!--                  </div>-->
-<!--                </div>-->
-<!--              </template>-->
+              <template #dropdownRender="{ menuNode: menu }">
+                <v-nodes :vnodes="menu" />
+                <a-divider style="margin: 4px 0" />
+                <a-space style="padding: 4px 8px">
+                  <a-input ref="inputRef" v-model:value="newTagName" placeholder="自定义标签名称" />
+                  <a-button type="text" @click="addTag">
+                    <template #icon>
+                      <plus-outlined />
+                    </template>
+                    自定义标签
+                  </a-button>
+                </a-space>
+              </template>
             </a-select>
           </a-form-item>
 
@@ -98,10 +96,10 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, onMounted } from 'vue'
+import {ref, reactive, computed, onMounted, defineComponent} from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { message } from 'ant-design-vue'
-import { UploadOutlined } from '@ant-design/icons-vue'
+import { UploadOutlined,PlusOutlined } from '@ant-design/icons-vue'
 import * as api from '../../api'
 
 const route = useRoute()
@@ -112,15 +110,24 @@ const submitLoading = ref(false)
 const tagsLoading = ref(false)
 const tagOptions = ref([])
 const requestData = ref({directory:"prompt"})
-// const newTagName = ref('')
+const newTagName = ref('')
+const inputRef = ref();
 const fileList = ref([])
 const previewVisible = ref(false)
 const previewImage = ref('')
 const previewTitle = ref('')
-const handleTagSearch = (val) => {
-  // 可以在这里实现远程搜索逻辑
-  console.log('Searching:', val);
-};
+
+const VNodes = defineComponent({
+  props: {
+    vnodes: {
+      type: Object,
+      required: true,
+    },
+  },
+  render() {
+    return this.vnodes;
+  },
+});
 // 表单数据
 const formData = reactive({
   title: '',
@@ -128,6 +135,7 @@ const formData = reactive({
   tagIds: [],
   imageUrl: ''
 })
+
 
 
 // 表单验证规则
@@ -143,6 +151,7 @@ const rules = {
     { required: true, type: 'array', min: 1, message: '请至少选择一个标签', trigger: 'change' }
   ]
 }
+
 
 // 获取标签列表
 const fetchTags = async () => {
@@ -163,36 +172,39 @@ const fetchTags = async () => {
 }
 
 //添加新标签
-// const addTag = async () => {
-//   if (!newTagName.value) {
-//     message.warning('请输入标签名称')
-//     return
-//   }
-//
-//   try {
-//     const res = await api.createTag({
-//       name: newTagName.value,
-//       type: 1 // 用户创建
-//     })
-//     if (res.code === 200) {
-//       const newTagId = res.data
-//       tagOptions.value.push({
-//         label: newTagName.value,
-//         value: newTagId
-//       })
-//       formData.tagIds.push(newTagId)
-//       newTagName.value = ''
-//       message.success('标签创建成功')
-//     }
-//   } catch (error) {
-//     message.error('创建标签失败，请稍后重试')
-//   }
-// }
+const addTag = async () => {
+  if (!newTagName.value) {
+    message.warning('请输入标签名称')
+    return
+  }
 
-// 处理标签变化
+  try {
+    const res = await api.createTag({
+      name: newTagName.value,
+      type: 1 // 用户创建
+    })
+    if (res.code === 200) {
+      const newTagId = res.data
+      tagOptions.value.push({
+        value:newTagId,
+        label:newTagName.value
+      })
+      formData.tagIds.push(newTagId)
+      newTagName.value = ''
+      message.success('标签创建成功')
+      console.log(formData.tagIds)
+    }
+  } catch (error) {
+    message.error('创建标签失败，请稍后重试')
+  }
+}
+
+//处理标签变化
 const handleTagChange = (value) => {
   formData.tagIds = value
+  console.log(formData.tagIds)
 }
+
 
 // 上传图片前的处理
 const beforeUpload = (file) => {
@@ -222,7 +234,6 @@ const handlePreview = async (file) => {
 
 // 处理图片变化
 const handleChange = (info) => {
-  console.log(info.file)
   if (info.file.status !== 'uploading') {
     console.log(info.file, info.fileList)
   }
@@ -275,14 +286,13 @@ const fetchPromptDetail = async () => {
 
 // 提交表单
 const handleSubmit = async () => {
+  formData.tagIds = formData.tagIds.filter(item => item !== null && item !== '');
+  if (formData.tagIds.length === 0) {
+    message.warning('请至少选择一个有效的标签');
+    return;
+  }
   submitLoading.value = true
-
   try {
-    // // 上传图片（如果有）
-    // if (fileList.value.length > 0 && fileList.value[0].originFileObj) {
-    //
-    // }
-    console.log(formData)
     let res
     if (isEdit.value) {
       // 更新提示词
@@ -355,4 +365,5 @@ onMounted(() => {
   max-width: 800px;
   margin: 0 auto;
 }
+
 </style>

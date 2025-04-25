@@ -55,7 +55,7 @@
                     <div class="prompt-card-content">
                       <h3 class="prompt-card-title">{{ prompt.title }}</h3>
                       <div class="prompt-card-tags">
-<!--                        <span v-for="tag in prompt.tags.slice(0, 3)" :key="tag.id" class="tag">{{ tag.name }}</span>-->
+                        <span v-for="tag in prompt.tags.slice(0, 3)" :key="tag.id" class="tag">{{ tag.name }}</span>
                       </div>
                       <div class="prompt-card-footer">
                         <div class="prompt-card-stats">

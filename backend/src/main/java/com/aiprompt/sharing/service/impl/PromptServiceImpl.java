@@ -12,6 +12,7 @@ import com.aiprompt.sharing.mapper.PromptTagMapper;
 import com.aiprompt.sharing.mapper.VoteMapper;
 import com.aiprompt.sharing.service.PromptService;
 import com.aiprompt.sharing.vo.PromptVO;
+import com.aiprompt.sharing.vo.TagVO;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -91,12 +92,17 @@ public class PromptServiceImpl extends ServiceImpl<PromptMapper, Prompt> impleme
     @Override
     public IPage<PromptVO> getPromptList(Integer current, Integer size, String keyword, List<String> tagIds, String sortBy) {
         Page<PromptVO> page = new Page<>(current, size);
-        return page.setRecords(promptMapper.getPromptVOList(keyword, tagIds, sortBy));
+        List<PromptVO> promptVOList = promptMapper.getPromptVOList(keyword, tagIds, sortBy);
+        for(PromptVO promptVO : promptVOList){
+            promptVO.setTags(promptTagMapper.getTagVOListByPromptId(promptVO.getId()));
+        }
+        return page.setRecords(promptVOList);
     }
 
     @Override
     public PromptVO getPromptDetail(String promptId, String userId) {
         PromptVO promptVO = promptMapper.getPromptVOById(promptId);
+        promptVO.setTags(promptTagMapper.getTagVOListByPromptId(promptId));
         if (promptVO == null) {
             throw new RuntimeException("提示词不存在");
         }

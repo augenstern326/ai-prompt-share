@@ -8,4 +8,10 @@
             (#{item.tagId}, #{item.promptId})
         </foreach>
     </insert>
+    <select id="getTagVOListByPromptId" resultType="com.aiprompt.sharing.vo.TagVO">
+        select tag.id,tag.name,tag.type from prompt_tag
+        left join tag on prompt_tag.tag_id = tag.id
+        where prompt_tag.prompt_id = #{promptId}
+              and tag.id is not null
+    </select>
 </mapper>
