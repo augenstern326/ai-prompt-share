@@ -161,7 +161,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import { message } from 'ant-design-vue'
 import { ReloadOutlined } from '@ant-design/icons-vue'
-import api from '../../api'
+import * as api from '../../api'
 
 // 表格列定义
 const columns = [
@@ -232,7 +232,7 @@ const editForm = reactive({
 const fetchUsers = async () => {
   loading.value = true
   try {
-    const res = await api.admin.getUserList({
+    const res = await api.getUserList({
       current: pagination.current,
       size: pagination.pageSize,
       keyword: searchKeyword.value || undefined,
@@ -300,7 +300,7 @@ const submitEdit = async () => {
   
   submitLoading.value = true
   try {
-    const res = await api.admin.updateUser({
+    const res = await api.updateUser({
       id: editForm.id,
       email: editForm.email,
       role: editForm.role,
@@ -323,7 +323,7 @@ const submitEdit = async () => {
 // 禁用用户
 const handleDisable = async (record) => {
   try {
-    const res = await api.admin.updateUserStatus(record.id, 0)
+    const res = await api.updateUserStatus(record.id, 0)
     if (res.code === 200) {
       message.success('用户已禁用')
       fetchUsers()
@@ -338,7 +338,7 @@ const handleDisable = async (record) => {
 // 启用用户
 const handleEnable = async (record) => {
   try {
-    const res = await api.admin.updateUserStatus(record.id, 1)
+    const res = await api.updateUserStatus(record.id, 1)
     if (res.code === 200) {
       message.success('用户已启用')
       fetchUsers()
@@ -353,7 +353,7 @@ const handleEnable = async (record) => {
 // 设为管理员
 const handleSetAdmin = async (record) => {
   try {
-    const res = await api.admin.updateUserRole(record.id, 'admin')
+    const res = await api.updateUserRole(record.id, 'admin')
     if (res.code === 200) {
       message.success('已设为管理员')
       fetchUsers()
@@ -368,7 +368,7 @@ const handleSetAdmin = async (record) => {
 // 取消管理员
 const handleRemoveAdmin = async (record) => {
   try {
-    const res = await api.admin.updateUserRole(record.id, 'user')
+    const res = await api.updateUserRole(record.id, 'user')
     if (res.code === 200) {
       message.success('已取消管理员权限')
       fetchUsers()

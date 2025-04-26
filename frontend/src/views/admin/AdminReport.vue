@@ -198,7 +198,7 @@
 import { ref, reactive, onMounted } from 'vue'
 import { message } from 'ant-design-vue'
 import { ReloadOutlined } from '@ant-design/icons-vue'
-import api from '../../api'
+import * as api from '../../api'
 
 // 表格列定义
 const columns = [
@@ -285,7 +285,7 @@ const detailForm = reactive({
 const fetchReports = async () => {
   loading.value = true
   try {
-    const res = await api.admin.getReportList({
+    const res = await api.getReportList({
       current: pagination.current,
       size: pagination.pageSize,
       keyword: searchKeyword.value || undefined,
@@ -341,7 +341,7 @@ const handleProcess = (record) => {
 // 忽略举报
 const handleIgnore = async (record) => {
   try {
-    const res = await api.admin.handleReport(record.id, {
+    const res = await api.handleReport(record.id, {
       status: 2,
       action: 0,
       handleNote: '管理员已忽略此举报'
@@ -372,7 +372,7 @@ const submitProcess = async () => {
   
   submitLoading.value = true
   try {
-    const res = await api.admin.handleReport(processForm.id, {
+    const res = await api.handleReport(processForm.id, {
       status: 1,
       action: processForm.action,
       handleNote: processForm.handleNote
@@ -383,7 +383,7 @@ const submitProcess = async () => {
       
       // 如果选择删除提示词，则调用删除API
       if (processForm.action === 1) {
-        await api.prompt.deletePrompt(processForm.promptId)
+        await api.deletePrompt(processForm.promptId)
       }
       
       fetchReports()

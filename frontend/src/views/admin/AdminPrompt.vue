@@ -228,7 +228,7 @@ const editForm = reactive({
 // 获取标签列表
 const fetchTags = async () => {
   try {
-    const res = await api.tag.getTagList()
+    const res = await api.getTagList()
     if (res.code === 200) {
       tagOptions.value = res.data.map(tag => ({
         label: tag.name,
@@ -244,7 +244,7 @@ const fetchTags = async () => {
 const fetchPrompts = async () => {
   loading.value = true
   try {
-    const res = await api.admin.getPromptList({
+    const res = await api.getPromptList({
       current: pagination.current,
       size: pagination.pageSize,
       keyword: searchKeyword.value || undefined,
@@ -311,7 +311,7 @@ const submitEdit = async () => {
   
   submitLoading.value = true
   try {
-    const res = await api.prompt.updatePrompt({
+    const res = await api.updatePrompt({
       id: editForm.id,
       title: editForm.title,
       content: editForm.content,
@@ -334,7 +334,7 @@ const submitEdit = async () => {
 // 删除提示词
 const handleDelete = async (record) => {
   try {
-    const res = await api.prompt.deletePrompt(record.id)
+    const res = await api.deletePrompt(record.id)
     if (res.code === 200) {
       message.success('删除成功')
       fetchPrompts()
@@ -349,7 +349,7 @@ const handleDelete = async (record) => {
 // 恢复提示词
 const handleRestore = async (record) => {
   try {
-    const res = await api.admin.restorePrompt(record.id)
+    const res = await api.restorePrompt(record.id)
     if (res.code === 200) {
       message.success('恢复成功')
       fetchPrompts()

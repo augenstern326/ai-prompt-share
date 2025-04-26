@@ -6,7 +6,7 @@
           <h2>{{ isLogin ? '登录' : '注册' }}</h2>
           <p>{{ isLogin ? '欢迎回来，请登录您的账号' : '创建一个新账号，开始分享AI提示词' }}</p>
         </div>
-        
+
         <a-form
           :model="formData"
           :rules="rules"
@@ -16,26 +16,26 @@
           <a-form-item label="用户名" name="username">
             <a-input v-model:value="formData.username" placeholder="请输入用户名" />
           </a-form-item>
-          
+
           <a-form-item v-if="!isLogin" label="邮箱" name="email">
             <a-input v-model:value="formData.email" placeholder="请输入邮箱" />
           </a-form-item>
-          
+
           <a-form-item label="密码" name="password">
             <a-input-password v-model:value="formData.password" placeholder="请输入密码" />
           </a-form-item>
-          
+
           <a-form-item v-if="!isLogin" label="确认密码" name="confirmPassword">
             <a-input-password v-model:value="formData.confirmPassword" placeholder="请再次输入密码" />
           </a-form-item>
-          
+
           <a-form-item>
             <a-button type="primary" html-type="submit" :loading="loading" block>
               {{ isLogin ? '登录' : '注册' }}
             </a-button>
           </a-form-item>
         </a-form>
-        
+
         <div class="login-footer">
           <p v-if="isLogin">
             还没有账号？
@@ -88,7 +88,7 @@ export default {
           { min: 6, max: 20, message: '密码长度必须在6-20个字符之间', trigger: 'blur' }
         ]
       }
-      
+
       // 注册时需要额外的验证规则
       if (!isLogin.value) {
         return {
@@ -111,7 +111,7 @@ export default {
           ]
         }
       }
-      
+
       return baseRules
     })
 
@@ -120,7 +120,7 @@ export default {
       loading.value = true
       try {
         let success
-        
+
         if (isLogin.value) {
           // 登录
           success = await userStore.login({
@@ -135,7 +135,7 @@ export default {
             password: formData.password
           })
         }
-        
+
         if (success) {
           // 获取重定向地址
           const redirect = route.query.redirect || '/'

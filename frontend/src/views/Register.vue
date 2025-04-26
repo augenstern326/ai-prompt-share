@@ -6,36 +6,36 @@
           <h2>注册</h2>
           <p>创建一个新账号，开始分享AI提示词</p>
         </div>
-        
+
         <a-form
-          :model="formData"
-          :rules="rules"
-          @finish="handleSubmit"
-          layout="vertical"
+            :model="formData"
+            :rules="rules"
+            @finish="handleSubmit"
+            layout="vertical"
         >
           <a-form-item label="用户名" name="username">
-            <a-input v-model:value="formData.username" placeholder="请输入用户名" />
+            <a-input v-model:value="formData.username" placeholder="请输入用户名"/>
           </a-form-item>
-          
+
           <a-form-item label="邮箱" name="email">
-            <a-input v-model:value="formData.email" placeholder="请输入邮箱" />
+            <a-input v-model:value="formData.email" placeholder="请输入邮箱"/>
           </a-form-item>
-          
+
           <a-form-item label="密码" name="password">
-            <a-input-password v-model:value="formData.password" placeholder="请输入密码" />
+            <a-input-password v-model:value="formData.password" placeholder="请输入密码"/>
           </a-form-item>
-          
+
           <a-form-item label="确认密码" name="confirmPassword">
-            <a-input-password v-model:value="formData.confirmPassword" placeholder="请再次输入密码" />
+            <a-input-password v-model:value="formData.confirmPassword" placeholder="请再次输入密码"/>
           </a-form-item>
-          
+
           <a-form-item>
             <a-button type="primary" html-type="submit" :loading="loading" block>
               注册
             </a-button>
           </a-form-item>
         </a-form>
-        
+
         <div class="register-footer">
           <p>
             已有账号？
@@ -47,18 +47,16 @@
   </div>
 </template>
 
-<script>
-import { ref, reactive } from 'vue'
-import { useRouter } from 'vue-router'
-import { useUserStore } from '@/stores/user'
-import { message } from 'ant-design-vue'
+<script setup>
+import {ref, reactive} from 'vue'
+import {useRouter} from 'vue-router'
+import {useUserStore} from '@/stores/user'
+import {message} from 'ant-design-vue'
 
-export default {
-  name: 'RegisterPage',
-  setup() {
-    const router = useRouter()
-    const userStore = useUserStore()
-    const loading = ref(false)
+
+const router = useRouter()
+const userStore = useUserStore()
+const loading = ref(false)
 
 // 表单数据
 const formData = reactive({
@@ -71,19 +69,19 @@ const formData = reactive({
 // 表单验证规则
 const rules = {
   username: [
-    { required: true, message: '请输入用户名', trigger: 'blur' },
-    { min: 3, max: 20, message: '用户名长度必须在3-20个字符之间', trigger: 'blur' }
+    {required: true, message: '请输入用户名', trigger: 'blur'},
+    {min: 3, max: 20, message: '用户名长度必须在3-20个字符之间', trigger: 'blur'}
   ],
   email: [
-    { required: true, message: '请输入邮箱', trigger: 'blur' },
-    { type: 'email', message: '请输入有效的邮箱地址', trigger: 'blur' }
+    {required: true, message: '请输入邮箱', trigger: 'blur'},
+    {type: 'email', message: '请输入有效的邮箱地址', trigger: 'blur'}
   ],
   password: [
-    { required: true, message: '请输入密码', trigger: 'blur' },
-    { min: 6, max: 20, message: '密码长度必须在6-20个字符之间', trigger: 'blur' }
+    {required: true, message: '请输入密码', trigger: 'blur'},
+    {min: 6, max: 20, message: '密码长度必须在6-20个字符之间', trigger: 'blur'}
   ],
   confirmPassword: [
-    { required: true, message: '请确认密码', trigger: 'blur' },
+    {required: true, message: '请确认密码', trigger: 'blur'},
     {
       validator: (_, value) => {
         if (value === formData.password) {
@@ -105,7 +103,7 @@ const handleSubmit = async () => {
       email: formData.email,
       password: formData.password
     })
-    
+
     if (success) {
       router.push('/')
     }
@@ -116,14 +114,7 @@ const handleSubmit = async () => {
   }
 }
 
-return {
-  formData,
-  rules,
-  loading,
-  handleSubmit
-}
-  }
-}
+
 </script>
 
 <style scoped>

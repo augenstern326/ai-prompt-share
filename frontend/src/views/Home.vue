@@ -41,8 +41,8 @@
                       </div>
                       <div class="prompt-card-footer">
                         <div class="prompt-card-stats">
-                          <span><a-icon type="like" /> {{ prompt.likeCount }}</span>
-                          <span><a-icon type="star" /> {{ prompt.favoriteCount }}</span>
+                          <span><like-outlined />  {{ prompt.likeCount }}</span>
+                          <span><star-outlined />  {{ prompt.favoriteCount }}</span>
                         </div>
                         <div class="prompt-card-user">
                           <a-avatar :src="prompt.userAvatar || '/avatar-default.png'" size="small" />
@@ -79,12 +79,12 @@
                     <div class="prompt-card-content">
                       <h3 class="prompt-card-title">{{ prompt.title }}</h3>
                       <div class="prompt-card-tags">
-<!--                        <span v-for="tag in prompt.tags.slice(0, 3)" :key="tag.id" class="tag">{{ tag.name }}</span>-->
+                        <span v-for="tag in prompt.tags.slice(0, 3)" :key="tag.id" class="tag">{{ tag.name }}</span>
                       </div>
                       <div class="prompt-card-footer">
                         <div class="prompt-card-stats">
-                          <span><a-icon type="like" /> {{ prompt.likeCount }}</span>
-                          <span><a-icon type="star" /> {{ prompt.favoriteCount }}</span>
+                          <span><like-outlined /> {{ prompt.likeCount }}</span>
+                          <span><star-outlined /> {{ prompt.favoriteCount }}</span>
                         </div>
                         <div class="prompt-card-user">
                           <a-avatar :src="prompt.userAvatar || '/avatar-default.png'" size="small" />
@@ -108,9 +108,11 @@
 import { ref, onMounted } from 'vue'
 import { useUserStore } from '@/stores/user'
 import * as api from '../api'
+import {LikeOutlined, StarOutlined} from '@ant-design/icons-vue'
 
 export default {
   name: 'HomePage',
+  components:{LikeOutlined,StarOutlined},
   setup() {
     const userStore = useUserStore()
     const loading = ref(false)
@@ -348,12 +350,12 @@ export default {
     flex-direction: column;
     text-align: center;
   }
-  
+
   .banner-image {
     margin-top: 24px;
     text-align: center;
   }
-  
+
   .banner-buttons {
     justify-content: center;
   }
