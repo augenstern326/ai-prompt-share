@@ -36,7 +36,7 @@ request.interceptors.response.use(
         // 跳转到登录页
         window.location.href = '/login';
       }
-      return Promise.reject(new Error(res.message || 'Error'));
+      return res;
     } else {
       return res;
     }

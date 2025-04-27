@@ -190,8 +190,7 @@ public class PromptServiceImpl extends ServiceImpl<PromptMapper, Prompt> impleme
         }
         
         // 逻辑删除提示词
-        prompt.setDeleted(1);
-        updateById(prompt);
+        removeById(prompt);
     }
 
     @Override

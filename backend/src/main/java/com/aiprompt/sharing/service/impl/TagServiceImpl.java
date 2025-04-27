@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 /**
@@ -36,7 +37,7 @@ public class TagServiceImpl extends ServiceImpl<TagMapper, Tag> implements TagSe
         tag.setType(createDTO.getType()); // 0-系统预设，1-用户创建
         tag.setUserId(userId);
         tag.setCreateTime(new Date());
-        
+        tag.setId(UUID.randomUUID().toString().replace("-","").toLowerCase());
         save(tag);
         return tag.getId();
     }

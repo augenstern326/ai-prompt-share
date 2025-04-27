@@ -53,6 +53,7 @@
               :before-upload="beforeUpload"
               @change="handleChange"
               @preview="handlePreview"
+              @remove="handleRemove"
           >
             <div v-if="fileList.length < 1">
               <upload-outlined/>
@@ -216,9 +217,6 @@ const handlePreview = async (file) => {
 
 // 处理图片变化
 const handleChange = (info) => {
-  if (info.file.status !== 'uploading') {
-    console.log(info.file, info.fileList)
-  }
   if (info.file.status === 'done') {
     message.success(`${info.file.name} 上传成功`)
     formState.imageUrl = info.file.response.data.url
@@ -235,6 +233,11 @@ const getBase64 = (file) => {
     reader.onload = () => resolve(reader.result)
     reader.onerror = error => reject(error)
   })
+}
+
+// 删除文件的回调
+const handleRemove = ()=>{
+  formState.imageUrl = ""
 }
 
 const onSubmit = () => {

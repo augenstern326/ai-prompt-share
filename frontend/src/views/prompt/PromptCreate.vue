@@ -31,13 +31,13 @@
           <a-form-item label="标签" name="tagIds">
             <a-select
                 mode="tags"
+                v-model:value="formData.tagIds"
                 placeholder="选择或创建标签"
                 :max-tag-count="5"
                 :options="tagOptions"
                 :loading="tagsLoading"
                 :tokenSeparators="[',']"
                 show-search
-                @change="handleTagChange"
             >
               <template #dropdownRender="{ menuNode: menu }">
                 <v-nodes :vnodes="menu" />
@@ -67,6 +67,7 @@
                 :before-upload="beforeUpload"
                 @change="handleChange"
                 @preview="handlePreview"
+                @remove="handleRemove"
             >
               <div v-if="fileList.length < 1">
                 <upload-outlined />
@@ -136,8 +137,6 @@ const formData = reactive({
   imageUrl: ''
 })
 
-
-
 // 表单验证规则
 const rules = {
   title: [
@@ -165,7 +164,7 @@ const fetchTags = async () => {
       }))
     }
   } catch (error) {
-    console.error('获取标签列表失败', error)
+    message.error('获取标签列表失败', error)
   } finally {
     tagsLoading.value = false
   }
@@ -184,6 +183,7 @@ const addTag = async () => {
       type: 1 // 用户创建
     })
     if (res.code === 200) {
+      console.log(res)
       const newTagId = res.data
       tagOptions.value.push({
         value:newTagId,
@@ -192,7 +192,6 @@ const addTag = async () => {
       formData.tagIds.push(newTagId)
       newTagName.value = ''
       message.success('标签创建成功')
-      console.log(formData.tagIds)
     }
   } catch (error) {
     message.error('创建标签失败，请稍后重试')
@@ -200,10 +199,9 @@ const addTag = async () => {
 }
 
 //处理标签变化
-const handleTagChange = (value) => {
-  formData.tagIds = value
-  console.log(formData.tagIds)
-}
+// const handleTagChange = (value) => {
+//   formData.tagIds = value
+// }
 
 
 // 上传图片前的处理
@@ -232,11 +230,12 @@ const handlePreview = async (file) => {
   previewTitle.value = file.name || file.url.substring(file.url.lastIndexOf('/') + 1)
 }
 
+// 删除文件的回调
+const handleRemove = ()=>{
+  formData.imageUrl = ""
+}
 // 处理图片变化
 const handleChange = (info) => {
-  if (info.file.status !== 'uploading') {
-    console.log(info.file, info.fileList)
-  }
   if (info.file.status === 'done') {
     message.success(`${info.file.name} 上传成功`)
     formData.imageUrl = info.file.response.data.url

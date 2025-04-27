@@ -50,7 +50,7 @@ public class UserController {
             UserVO userVO = userService.login(loginDTO);
             return Result.success(userVO);
         } catch (Exception e) {
-            return Result.error(e.getMessage());
+            return Result.error(400,e.getMessage());
         }
     }
 

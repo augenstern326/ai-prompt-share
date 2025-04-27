@@ -14,7 +14,6 @@ export const useUserStore = defineStore('user', () => {
   const login = async (loginData) => {
     try {
       const res = await api.login(loginData)
-      console.log(res)
       if (res.code === 200) {
         token.value = res.data.token
         userInfo.value = res.data
