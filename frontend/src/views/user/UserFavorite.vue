@@ -24,9 +24,9 @@
                       </div>
                       <div class="prompt-card-footer">
                         <div class="prompt-card-stats">
-                          <span><a-icon type="like" /> {{ prompt.likeCount }}</span>
-                          <span><a-icon type="dislike" /> {{ prompt.dislikeCount }}</span>
-                          <span><a-icon type="star" /> {{ prompt.favoriteCount }}</span>
+                          <span><like-outlined/> {{ prompt.likeCount }}</span>
+                          <span><dislike-outlined/> {{ prompt.dislikeCount }}</span>
+                          <span><star-outlined/> {{ prompt.favoriteCount }}</span>
                         </div>
                         <div class="prompt-card-user">
                           <a-avatar :src="prompt.userAvatar || '/avatar-default.png'" size="small" />
@@ -66,7 +66,7 @@
 import { ref, onMounted } from 'vue'
 import { message } from 'ant-design-vue'
 import * as api from '../../api'
-
+import {LikeOutlined,DislikeOutlined, StarOutlined} from "@ant-design/icons-vue";
 const loading = ref(false)
 const prompts = ref([])
 const total = ref(0)

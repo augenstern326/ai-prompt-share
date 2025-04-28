@@ -12,9 +12,6 @@
             <router-link v-else to="/login" class="banner-btn">立即登录</router-link>
           </div>
         </div>
-        <div class="banner-image">
-          <img src="../assets/images/banner-illustration.svg" alt="AI提示词" />
-        </div>
       </div>
     </div>
 

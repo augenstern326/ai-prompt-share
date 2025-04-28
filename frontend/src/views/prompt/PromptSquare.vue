@@ -258,7 +258,7 @@ onMounted(() => {
 
 .filter-section {
   display: grid;
-  grid-template-columns: 1fr 2fr 120px;
+  grid-template-columns: 2fr 1fr 120px;
   gap: 16px;
   margin-bottom: 24px;
 }
